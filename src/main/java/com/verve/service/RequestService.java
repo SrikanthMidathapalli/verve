@@ -39,7 +39,26 @@ public class RequestService {
             loggingService.logUniqueRequestCount(count);
             
             if (request.getEndpoint() != null) {
-                sendHttpRequest(request.getEndpoint(), count);
+                sendHttpRequest(request.getEndpoint(), count, false);
+            }
+
+            return "ok";
+        } else {
+            return "failed";
+        }
+    }
+    
+    public String acceptPostRequest(Request request) {
+        boolean isUnique = redisRepository.isUniqueRequest(request.getId());
+
+        if (isUnique) {
+            redisRepository.addRequest(request.getId());
+            int count = uniqueRequestCount.incrementAndGet();
+            logger.info("Unique Request Count: " + count);
+            loggingService.logUniqueRequestCount(count);
+
+            if (request.getEndpoint() != null) {
+                sendHttpRequest(request.getEndpoint(), count, true);
             }
 
             return "ok";
@@ -48,17 +67,30 @@ public class RequestService {
         }
     }
 
-    private void sendHttpRequest(String endpoint, int count) {
+    private void sendHttpRequest(String endpoint, int count, boolean isPost) {
         try {
             WebClient webClient = webClientBuilder.baseUrl(endpoint).build();
 
-            webClient.get()
-                    .uri(uriBuilder -> uriBuilder.queryParam("count", count).build())
-                    .retrieve()
-                    .toBodilessEntity()
-                    .doOnTerminate(() -> logger.info("Request sent to " + endpoint))
-                    .doOnError(WebClientResponseException.class, error -> logger.warning("Request failed: " + error.getMessage()))
-                    .subscribe();
+            if (isPost) {
+                webClient.post()
+                        .uri(uriBuilder -> uriBuilder.build())
+                        .bodyValue("{\"count\": " + count + "}")
+                        .retrieve()
+                        .toBodilessEntity()
+                        .doOnTerminate(() -> logger.info("POST request sent to " + endpoint))
+                        .doOnError(WebClientResponseException.class, error ->
+                                logger.warning("POST request failed: " + error.getMessage()))
+                        .subscribe();
+            } else {
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder.queryParam("count", count).build())
+                        .retrieve()
+                        .toBodilessEntity()
+                        .doOnTerminate(() -> logger.info("GET request sent to " + endpoint))
+                        .doOnError(WebClientResponseException.class, error ->
+                                logger.warning("GET request failed: " + error.getMessage()))
+                        .subscribe();
+            }
         } catch (Exception e) {
             logger.warning("Error sending request to endpoint: " + e.getMessage());
         }

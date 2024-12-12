@@ -17,4 +17,6 @@ public class RedisRepository {
     public void addRequest(Integer id) {
         redisTemplate.opsForValue().set(String.valueOf(id), "true");
     }
+    
+    
 }
