@@ -30,6 +30,12 @@ The application handles the following tasks:
    - mvn spring-boot:run
    -  GET http://localhost:8083/api/verve/accept?id=123
   ```
+### Running the Application in Docker:
+   ```bash
+  - docker build -t verve-app .
+  - docker run -p 8085:8080 verve-app
+  - docker run -p 8082:8082 verve-app
+```
 ### Output Example:
 Below is an example output showing the request processing in action.
 
@@ -38,10 +44,3 @@ Below is an example output showing the request processing in action.
 ![Output Screenshot3](images/postok.png)
 ![Output Screenshot4](images/postfailed.png)
 ![Output Screenshot5](images/jm1.png)
-
-### Running the Application in Docker:
-```bash
-docker build -t verve-app .
-docker run -p 8085:8080 verve-app
-docker run -p 8082:8082 verve-app
-```
