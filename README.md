@@ -29,21 +29,15 @@ The application handles the following tasks:
    - mvn clean install
    - mvn spring-boot:run
    -  GET http://localhost:8083/api/verve/accept?id=123
-```
+  ```
 ### Output Example:
 Below is an example output showing the request processing in action.
 
-![Output Screenshot](images/ok.png)
-
-![Output Screenshot](images/ok.png)
-
-![Output Screenshot](images/failed.png)
-
-![Output Screenshot](images/postok.png)
-
-![Output Screenshot](images/postfailed.png)
-
-![Output Screenshot](images/jm1.png)
+![Output Screenshot1](images/ok.png)
+![Output Screenshot2](images/failed.png)
+![Output Screenshot3](images/postok.png)
+![Output Screenshot4](images/postfailed.png)
+![Output Screenshot5](images/jm1.png)
 
 ### Running the Application in Docker:
 ```bash
